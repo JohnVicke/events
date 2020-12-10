@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import React, { createContext, useContext, useState } from "react";
 import { useRouter } from "next/router";
+import React, { createContext, useContext, useState } from "react";
 
 const authContext = createContext();
 
@@ -21,45 +21,84 @@ export const REGISTER_USER = gql`
   }
 `;
 
+export const LOGIN_USER = gql`
+  mutation login($usernameOrEmail: String!, $password: String!) {
+    login(usernameOrEmail: $usernameOrEmail, password: $password) {
+      user {
+        id
+        username
+        email
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
 function useProvideAuth() {
   const [user, setUser] = useState(null);
   const [register] = useMutation(REGISTER_USER);
+  const [login, { loading: loginLoading, error: loginError, data: loginData }] = useMutation(LOGIN_USER);
 
   const router = useRouter();
   const toast = useToast();
 
-  const handleRegister = (email, password) => {
-    register({ variables: { username: "tester", email: email, password: password } })
+  const handleErrors = (errors) => {
+    return errors.map((error) => {
+      toast({
+        title: "Ooops, an error occured.",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    });
+  };
+
+  const handleSuccess = (header, message, user, route = null) => {
+    setUser(user);
+    toast({
+      title: header,
+      description: message,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    if (route) router.push(route);
+  };
+
+  const handleRegister = (email, username, password) => {
+    register({ variables: { username: username, email: email, password: password } })
       .then(({ data }) => {
         return data.register;
       })
       .then(({ user, errors }) => {
         if (errors) {
-          return errors.map((error) => {
-            toast({
-              title: "Ooops, an error occured.",
-              description: error.message,
-              status: "error",
-              duration: 9000,
-              isClosable: true,
-            });
-          });
+          return handleErrors(errors);
         }
-        setUser(user);
-        toast({
-          title: `Success, welcome onboard ${user.username}! 🍻`,
-          description: "Your account has been created",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        router.push("/");
+        handleSuccess(`Success, welcome onboard ${user.username}! 🍻`, "Your account has been created", user, "/");
+      });
+  };
+
+  const handleLogin = (usernameOrEmail, password) => {
+    login({ variables: { usernameOrEmail, password } })
+      .then(({ data }) => {
+        return data.login;
+      })
+      .then(({ user, errors }) => {
+        if (errors) {
+          return handleErrors(errors);
+        }
+        handleSuccess(`Welcome back, ${user.username}! 🍻`, "Succesfully logged in", user, "/");
       });
   };
 
   return {
     user,
     handleRegister,
+    handleLogin,
   };
 }
 

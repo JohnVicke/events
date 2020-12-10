@@ -63,9 +63,9 @@ export const resolvers = {
       req.session.userId = user.id;
       return { user };
     },
-    login: async (_, { userNameOrEmail, password }, { req }) => {
+    login: async (_, { usernameOrEmail, password }, { req }) => {
       const user = await UserModel.findOne(
-        userNameOrEmail.includes("@") ? { where: { email: userNameOrEmail } } : { where: { username: userNameOrEmail } }
+        usernameOrEmail.includes("@") ? { where: { email: usernameOrEmail } } : { where: { username: usernameOrEmail } }
       );
 
       if (!user) {

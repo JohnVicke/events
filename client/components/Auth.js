@@ -18,29 +18,61 @@ import { useForm } from "react-hook-form";
 
 const AuthContent = ({ register, errors, type, ...rest }) => (
   <Stack {...rest}>
-    <FormControl isInvalid={errors.email && errors.email.message}>
-      <FormLabel>Email address</FormLabel>
-      <Input
-        autoFocus
-        name="email"
-        colorScheme="teal"
-        ref={register({
-          required: "Please enter your email.",
-        })}
-        placeholder="name@site.com"
-      />
-      <FormErrorMessage>{errors.email && errors.message}</FormErrorMessage>
-    </FormControl>
-    <FormControl>
+    {type === "Register" ? (
+      <>
+        <FormControl isInvalid={errors.email && errors.email.message}>
+          <FormLabel>Email address</FormLabel>
+          <Input
+            autoFocus
+            name="email"
+            colorScheme="teal"
+            ref={register({
+              required: "Email required",
+            })}
+            placeholder="name@site.com"
+          />
+          <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
+        </FormControl>
+        <FormControl isInvalid={errors.username && errors.username.message}>
+          <FormLabel>Username</FormLabel>
+          <Input
+            autoFocus
+            name="username"
+            colorScheme="teal"
+            ref={register({
+              required: "Username required",
+            })}
+            placeholder="username"
+          />
+          <FormErrorMessage>{errors.username && errors.username.message}</FormErrorMessage>
+        </FormControl>
+      </>
+    ) : (
+      <FormControl isInvalid={errors.usernameOrEmail && errors.usernameOrEmail.message}>
+        <FormLabel>Username or email</FormLabel>
+        <Input
+          autoFocus
+          name="usernameOrEmail"
+          colorScheme="teal"
+          ref={register({
+            required: "Email or username is required",
+          })}
+          placeholder="username / name@site.com"
+        />
+        <FormErrorMessage>{errors.usernameOrEmail && errors.usernameOrEmail.message}</FormErrorMessage>
+      </FormControl>
+    )}
+    <FormControl isInvalid={errors.password && errors.password.message}>
       <FormLabel>Password</FormLabel>
       <Input
-        name="pass"
+        name="password"
         type="password"
         ref={register({
           required: "Please enter a password",
         })}
+        placeholder="********"
       />
-      <FormErrorMessage>{errors.pass && errors.pass.message}</FormErrorMessage>
+      <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
     </FormControl>
     <Button type="submit" mt={4} variant="solid" colorScheme="teal">
       {type}

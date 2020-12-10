@@ -27,6 +27,9 @@ export default function Home({ allPostsData }) {
       <Link href="/register">
         <Button>Register</Button>
       </Link>
+      <Link href="/login">
+        <Button>Login</Button>
+      </Link>
     </Layout>
   );
 }

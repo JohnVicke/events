@@ -17,6 +17,7 @@ const main = async () => {
   // Express settings
   const app = express();
 
+  // session to keep user logged in
   let sess = {
     name: "qid",
     secret: "Test",
@@ -59,6 +60,12 @@ const main = async () => {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`);
+  });
+  app.use("/", (_, res) => {
+    res.json({
+      api: "Events v1 api",
+      graphql: "Enabled",
+    });
   });
 };
 

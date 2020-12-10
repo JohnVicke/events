@@ -1,16 +1,12 @@
 import { useAuth } from "../utils/auth";
-import { Box, Container, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import Auth from "../components/Auth";
 
-export default () => {
+export default function Register() {
   const auth = useAuth();
-  const toast = useToast();
-  const router = useRouter();
 
-  const handleRegister = ({ email, pass }) => {
-    const res = auth.handleRegister(email, pass);
+  const handleRegister = ({ email, password, username }) => {
+    auth.handleRegister(email, username, password);
   };
 
   return <Auth type="Register" onSubmit={handleRegister} />;
-};
+}
