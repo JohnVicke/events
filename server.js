@@ -61,6 +61,7 @@ const main = async () => {
   app.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`);
   });
+
   app.use("/", (_, res) => {
     res.json({
       api: "Events v1 api",

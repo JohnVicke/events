@@ -41,6 +41,7 @@
     "express-validator": "^6.7.0",
     "graphql": "^15.4.0",
     "http": "0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5"

@@ -1,10 +1,17 @@
 import UserModel from "../../database/models/usermodel";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
+import decodeToken from "../../utils/authenticate";
+import { JWT_SECRET } from "../../constants";
 
 export const resolvers = {
   Query: {
     hello: () => "Hello world",
-    users: async () => await UserModel.findAll(),
+    users: async (root, args, { req }) => {
+      console.log(req);
+      const decoded = decodeToken(req);
+      return await UserModel.findAll();
+    },
   },
   Mutation: {
     register: async (_, { username, password, email }, { req }) => {
@@ -92,6 +99,24 @@ export const resolvers = {
       }
       req.session.userId = user.id;
       return { user };
+    },
+    loginPersistTest: async (_, args, { req }) => {
+      const {
+        data: { usernameOrEmail, password },
+      } = args;
+
+      const user = await UserModel.findOne(
+        usernameOrEmail.includes("@") ? { where: { email: usernameOrEmail } } : { where: { username: usernameOrEmail } }
+      );
+
+      if (!user) {
+        throw new Error("Unable to login");
+      }
+      const validPassword = await argon2.verify(user.password, password);
+      if (!validPassword) {
+        throw new Error("Unable to login");
+      }
+      return { token: jwt.sign({ id: user.id, email: user.email }, JWT_SECRET) };
     },
   },
 };
