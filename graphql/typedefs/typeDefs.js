@@ -36,6 +36,32 @@ export const typeDefs = gql`
     location: Location!
   }
 
+  type ForumUser {
+    username: String!
+    image: String!
+  }
+
+  type Message {
+    content: String!
+    time: String!
+    sender: ForumUser!
+  }
+
+  type Room {
+    name: String!
+    image: String!
+    users: [ForumUser]
+    chat: [Message]
+  }
+
+  type EventForum {
+    name: String!
+    image: String!
+    users: [ForumUser]
+    rooms: [Room]
+    chat: [Message]
+  }
+
   type EventsResponse {
     events: [Event]
     errors: [Error]

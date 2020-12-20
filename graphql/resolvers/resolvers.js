@@ -17,11 +17,12 @@ export const resolvers = {
      *        this way we wont spam ticketmaster API.
      *
      * Logic:
-     *    if query params result in database
-     *      if result is up to date (lets say 3 days)
+     *    if query params result in database and is up to date (3 days max)
      *        return database entry
      *    else
-     *       return new data from api
+     *       fetch new data
+     *       save in database
+     *       return new data
      */
     personalizedEvents: async (root, args, { req }) => {
       const decoded = decodeToken(req);
