@@ -4,6 +4,7 @@ import cors from "cors";
 import db from "./database/database";
 import { resolvers } from "./graphql/resolvers/resolvers";
 import { typeDefs } from "./graphql/typedefs/typeDefs";
+import { generateDB } from "./utils/generate";
 import session from "express-session";
 
 const { ApolloServer, gql } = require("apollo-server-express");
@@ -13,11 +14,12 @@ require("dotenv").config();
 const main = async () => {
   // init database
   await db.sync({ force: true });
+  generateDB();
 
   // Express settings
   const app = express();
 
-  // session to keep user logged in
+  // session to keep user logged in, WILL USE LOCAL STORAGE INSTEAD
   let sess = {
     name: "qid",
     secret: "Test",

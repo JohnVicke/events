@@ -20,6 +20,7 @@ const decodeToken = (req, requireAuth = true) => {
       throw new Error("Verification of authentication scheme failed");
     }
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log(decoded);
     return decoded;
   }
 

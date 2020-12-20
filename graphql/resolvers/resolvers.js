@@ -3,14 +3,52 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import decodeToken from "../../utils/authenticate";
 import { JWT_SECRET } from "../../constants";
+import { getEvents } from "../../api/ticketmaster";
 
 export const resolvers = {
   Query: {
     hello: () => "Hello world",
     users: async (root, args, { req }) => {
-      console.log(req);
       const decoded = decodeToken(req);
       return await UserModel.findAll();
+    },
+    /***
+     * TODO: Personalized events should first check database for entries that match query params
+     *        this way we wont spam ticketmaster API.
+     *
+     * Logic:
+     *    if query params result in database
+     *      if result is up to date (lets say 3 days)
+     *        return database entry
+     *    else
+     *       return new data from api
+     */
+    personalizedEvents: async (root, args, { req }) => {
+      const decoded = decodeToken(req);
+      // This should run in a loop over preferences (personalization)
+      const events = await getEvents({ countryCode: "NZ", keyword: "Rock" });
+      // TODO: Better error handling for individual params
+      if (events.error) {
+        return {
+          errors: [
+            {
+              field: "events",
+              message: events.error,
+            },
+          ],
+        };
+      }
+      if (events.length === 0) {
+        return {
+          errors: [
+            {
+              field: "events",
+              message: "No events found",
+            },
+          ],
+        };
+      }
+      return { events };
     },
   },
   Mutation: {

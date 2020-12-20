@@ -17,10 +17,28 @@ export const typeDefs = gql`
     errors: [Error]
   }
 
-  type Mutation {
-    register(username: String!, password: String!, email: String!): UserResponse!
-    login(usernameOrEmail: String!, password: String!): UserResponse!
-    loginPersistTest(data: UserLoginInput!): AuthPayload!
+  type AuthPayload {
+    token: String!
+  }
+
+  type Location {
+    name: String!
+    countryCode: String!
+    city: String!
+    venue: String!
+  }
+
+  type Event {
+    name: String!
+    date: String!
+    image: String!
+    type: String!
+    location: Location!
+  }
+
+  type EventsResponse {
+    events: [Event]
+    errors: [Error]
   }
 
   input UserLoginInput {
@@ -28,12 +46,15 @@ export const typeDefs = gql`
     password: String!
   }
 
-  type AuthPayload {
-    token: String!
-  }
-
   type Query {
     hello: String!
     users: [User!]!
+    personalizedEvents: EventsResponse
+  }
+
+  type Mutation {
+    register(username: String!, password: String!, email: String!): UserResponse!
+    login(usernameOrEmail: String!, password: String!): UserResponse!
+    loginPersistTest(data: UserLoginInput!): AuthPayload!
   }
 `;
